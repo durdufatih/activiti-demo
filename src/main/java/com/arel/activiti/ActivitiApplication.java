@@ -13,14 +13,4 @@ public class ActivitiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ActivitiApplication.class, args);
 	}
-	@Bean
-	public CommandLineRunner init(final MyService myService) {
-
-		return new CommandLineRunner() {
-			public void run(String... strings) throws Exception {
-				myService.createPersons();
-			}
-		};
-
-	}
 }
