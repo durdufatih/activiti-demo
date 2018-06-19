@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -31,13 +30,17 @@ public class ActivitiService {
     public List<ProcessDefinitionDto> getProcessIdList() {
         SecurityContextHolder.getContext().getAuthentication();
         UsernamePasswordAuthenticationToken accountCredentials = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        if (accountCredentials.getAuthorities().contains("Chief"))
+        if (accountCredentials.getAuthorities().stream().anyMatch(item -> item.getAuthority().contains("Administrator"))) {
             return repositoryService.createProcessDefinitionQuery()
-                    .latestVersion().active().list().stream().map(item -> convertTo(item)).collect(Collectors.toList());
-        else {
-            return repositoryService.createProcessDefinitionQuery()
-                    .latestVersion().processDefinitionCategoryNotEquals("Chief")
+                    .latestVersion()
                     .active().list().stream().map(item -> convertTo(item)).collect(Collectors.toList());
+        } else {
+            return repositoryService.createProcessDefinitionQuery()
+                    .latestVersion()
+                    .active().list().stream()
+                    .filter(item -> accountCredentials.getAuthorities().stream()
+                            .anyMatch(role -> role.getAuthority().contains(item.getCategory())))
+                    .map(item -> convertTo(item)).collect(Collectors.toList());
         }
     }
 

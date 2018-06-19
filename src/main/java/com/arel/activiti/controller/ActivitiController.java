@@ -26,8 +26,9 @@ public class ActivitiController {
     @GetMapping("list")
     public ResponseEntity<List<ProcessDefinitionDto>> getProcessList() {
         List<ProcessDefinitionDto> processDefinitionList = activitiService.getProcessIdList();
-        if (processDefinitionList.isEmpty())
-            return (ResponseEntity<List<ProcessDefinitionDto>>) ResponseEntity.notFound();
+        if (processDefinitionList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
 
         return ResponseEntity.ok(processDefinitionList);
     }
