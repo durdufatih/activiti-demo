@@ -16,6 +16,24 @@ public class UserEntity {
     private String email;
     private String name;
     private String surname;
+    private int role;
+    private String userGroup;
+
+    public String getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(String userGroup) {
+        this.userGroup = userGroup;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
+    }
 
     public long getId() {
         return id;

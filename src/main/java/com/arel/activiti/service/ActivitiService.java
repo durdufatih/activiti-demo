@@ -1,12 +1,14 @@
 package com.arel.activiti.service;
 
 import com.arel.activiti.model.ProcessDefinitionDto;
-import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -19,18 +21,24 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 public class ActivitiService {
 
     private final RepositoryService repositoryService;
-    private final IdentityService identityService;
     private Logger logger = LoggerFactory.getLogger(ActivitiService.class);
 
     @Autowired
-    public ActivitiService(RepositoryService repositoryService, IdentityService identityService) {
+    public ActivitiService(RepositoryService repositoryService) {
         this.repositoryService = repositoryService;
-        this.identityService = identityService;
     }
 
     public List<ProcessDefinitionDto> getProcessIdList() {
-        return repositoryService.createProcessDefinitionQuery()
-                .latestVersion().active().list().stream().map(item -> convertTo(item)).collect(Collectors.toList());
+        SecurityContextHolder.getContext().getAuthentication();
+        UsernamePasswordAuthenticationToken accountCredentials = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        if (accountCredentials.getAuthorities().contains("Chief"))
+            return repositoryService.createProcessDefinitionQuery()
+                    .latestVersion().active().list().stream().map(item -> convertTo(item)).collect(Collectors.toList());
+        else {
+            return repositoryService.createProcessDefinitionQuery()
+                    .latestVersion().processDefinitionCategoryNotEquals("Chief")
+                    .active().list().stream().map(item -> convertTo(item)).collect(Collectors.toList());
+        }
     }
 
     public boolean setCategory(String processId, String category) {

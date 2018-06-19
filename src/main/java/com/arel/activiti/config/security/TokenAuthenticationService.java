@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,13 +18,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 class TokenAuthenticationService {
     static final long EXPIRATIONTIME = 864_000_000; // 10 days
     static final String SECRET = "ThisIsASecret";
     static final String TOKEN_PREFIX = "Bearer";
     static final String HEADER_STRING = "Authorization";
 
-    static void addAuthentication(HttpServletResponse res, Authentication auth) throws IOException {
+
+    static void addAuthentication(HttpServletResponse res, Authentication auth)  {
 
         Claims claims = Jwts.claims().setSubject(auth.getName());
         claims.put("scopes", auth.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
@@ -36,7 +39,6 @@ class TokenAuthenticationService {
                 .compact();
 
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
-        res.setContentType("application/json");
     }
 
     static Authentication getAuthentication(HttpServletRequest request) {

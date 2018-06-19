@@ -13,6 +13,15 @@ public class AccountCredentials implements UserDetails {
     private Collection<GrantedAuthority> authorities;
     private String name;
     private String surname;
+    private String userGroup;
+
+    public String getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(String userGroup) {
+        this.userGroup = userGroup;
+    }
 
     public String getSurname() {
         return surname;
