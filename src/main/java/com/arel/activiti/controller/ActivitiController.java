@@ -1,8 +1,11 @@
 package com.arel.activiti.controller;
 
-import com.arel.activiti.model.GeneralResponse;
-import com.arel.activiti.model.ProcessDefinitionDto;
+import com.arel.activiti.model.model.GeneralResponse;
+import com.arel.activiti.model.model.ProcessDefinitionDto;
+import com.arel.activiti.model.model.ProcessInstanceDto;
+import com.arel.activiti.model.model.TaskDto;
 import com.arel.activiti.service.ActivitiService;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -50,4 +53,10 @@ public class ActivitiController {
 
         return ResponseEntity.ok(new GeneralResponse("Success", true));
     }
+
+    @GetMapping(value = "/process/{id}")
+    public ResponseEntity<ProcessInstanceDto> startProcessInstance(@PathVariable String id) {
+        return ResponseEntity.ok(activitiService.startProcess(id));
+    }
+
 }

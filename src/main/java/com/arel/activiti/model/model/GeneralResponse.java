@@ -1,4 +1,4 @@
-package com.arel.activiti.model;
+package com.arel.activiti.model.model;
 
 public class GeneralResponse {
     private String message;
