@@ -8,7 +8,6 @@ import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.impl.persistence.entity.AttachmentEntity;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Attachment;
@@ -22,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -105,6 +105,9 @@ public class ActivitiService {
     private TaskDto convertToTask(Task task) {
         TaskDto taskDto = new TaskDto();
         copyProperties(task, taskDto);
+
+        taskDto.setCommentList(this.findAllComment(task.getId()));
+        taskDto.setAttachmentList(this.findTaskAttachment(task.getId()));
         return taskDto;
     }
 
@@ -134,12 +137,29 @@ public class ActivitiService {
         }
     }
 
-    public boolean addAttachment(String id, MultipartFile file){
+    public boolean addAttachment(String id, MultipartFile file) {
         Task task = taskService.createTaskQuery().taskId(id).singleResult();
 
-        //taskService.createAttachment("attachment",task.getId(),task.getProcessInstanceId(),task.);
-        return false;
+        try {
+            taskService.createAttachment("attachment", task.getId(), task.getProcessInstanceId(), file.getContentType(), file.getOriginalFilename(), file.getInputStream());
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
+
+    public List<Attachment> findTaskAttachment(String id) {
+        Task task = taskService.createTaskQuery().taskId(id).singleResult();
+
+        return taskService.getTaskAttachments(task.getId());
+
+    }
+
+    public Attachment findAttachment(String id) {
+        return taskService.getAttachment(id);
+
+    }
+
     public List<CommentDto> findAllComment(String id) {
         return taskService.getTaskComments(id).stream().map(item -> convetToCommentDto(item)).collect(Collectors.toList());
     }

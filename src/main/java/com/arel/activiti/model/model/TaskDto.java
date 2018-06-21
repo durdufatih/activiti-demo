@@ -1,6 +1,9 @@
 package com.arel.activiti.model.model;
 
+import org.activiti.engine.task.Attachment;
+
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public class TaskDto {
@@ -40,6 +43,25 @@ public class TaskDto {
     private Map<String, Object> taskLocalVariables;
 
     private Map<String, Object> processVariables;
+
+    private List<CommentDto> commentList;
+    private List<Attachment> attachmentList;
+
+    public List<Attachment> getAttachmentList() {
+        return attachmentList;
+    }
+
+    public void setAttachmentList(List<Attachment> attachmentList) {
+        this.attachmentList = attachmentList;
+    }
+
+    public List<CommentDto> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<CommentDto> commentList) {
+        this.commentList = commentList;
+    }
 
     public String getId() {
         return id;
