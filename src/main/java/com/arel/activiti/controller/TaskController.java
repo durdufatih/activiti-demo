@@ -49,5 +49,10 @@ public class TaskController {
         return ResponseEntity.ok(activitiService.findAttachment(id));
     }
 
+    @GetMapping("/complete/{id}")
+    public ResponseEntity<Boolean> taskComplete(@PathVariable String id) {
+        return ResponseEntity.ok(activitiService.taskComplete(id));
+    }
+
 
 }

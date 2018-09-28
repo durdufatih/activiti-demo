@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1526992254153" name="" targetNamespace="Ã¶ÄŸrenciiÅŸleri,muhasebe" typeLanguage="http://www.w3.org/2001/XMLSchema">
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1526992254153" name="" targetNamespace="Officer" typeLanguage="http://www.w3.org/2001/XMLSchema">
   <process id="myProcess_1" isClosed="false" isExecutable="true" processType="None">
     <startEvent id="_2" name="StartEvent"/>
-    <userTask activiti:assignee="${initialPerson}" activiti:exclusive="true" id="_3" name="UserTask">
+    <userTask activiti:assignee="${initialPerson}" activiti:exclusive="true" activiti:priority="100" id="_3" name="UserTask">
+      <documentation id="_3_D_1"><![CDATA[Bu Task Ã„Â°lk TasktÃ„Â±r izin istediÃ„Å¸in anda yÃƒÂ¶neticiye ÃƒÂ§aÃ„Å¸rÃ„Â± gider]]></documentation>
       <extensionElements>
         <activiti:formProperty id="id" name="ID" readable="true" required="true" type="string" writable="false"/>
         <activiti:formProperty id="name" name="Name" readable="true" required="false" type="string" writable="false"/>
+        <activiti:formProperty id="ok" name="Okey" readable="false" required="true" type="boolean" writable="false"/>
       </extensionElements>
     </userTask>
     <sequenceFlow id="_4" sourceRef="_2" targetRef="_3"/>
-    <serviceTask activiti:exclusive="true" activiti:expression="${detail.call()}" id="_5" name="ServiceTask"/>
-    <sequenceFlow id="_6" sourceRef="_3" targetRef="_5"/>
     <endEvent id="_7" name="EndEvent"/>
-    <sequenceFlow id="_8" sourceRef="_5" targetRef="_7"/>
-    <userTask activiti:exclusive="true" id="_9" name="UserTask"/>
-    <sequenceFlow id="_10" sourceRef="_3" targetRef="_9"/>
+    <userTask activiti:assignee="${initialPerson}" activiti:exclusive="true" id="_9" name="UserTask"/>
+    <sequenceFlow id="_10" sourceRef="_3" targetRef="_9">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ok==true}]]></conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="_11" sourceRef="_9" targetRef="_7"/>
+    <sequenceFlow id="_12" sourceRef="_3" targetRef="_7">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ok==false}]]></conditionExpression>
+    </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram documentation="background=#3C3F41;count=1;horizontalcount=1;orientation=0;width=842.4;height=1195.2;imageableWidth=832.4;imageableHeight=1185.2;imageableX=5.0;imageableY=5.0" id="Diagram-_1" name="New Diagram">
     <bpmndi:BPMNPlane bpmnElement="myProcess_1">
@@ -27,12 +31,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="_3" id="Shape-_3">
         <omgdc:Bounds height="55.0" width="85.0" x="260.0" y="270.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_5" id="Shape-_5">
-        <omgdc:Bounds height="55.0" width="85.0" x="425.0" y="275.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
@@ -49,24 +47,17 @@
           <omgdc:Bounds height="55.0" width="85.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_12" id="BPMNEdge__12" sourceElement="_3" targetElement="_7">
+        <omgdi:waypoint x="302.5" y="325.0"/>
+        <omgdi:waypoint x="445.0" y="380.0"/>
+        <omgdi:waypoint x="576.0" y="332.0"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_4" id="BPMNEdge__4" sourceElement="_2" targetElement="_3">
         <omgdi:waypoint x="112.0" y="281.0"/>
         <omgdi:waypoint x="260.0" y="297.5"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_6" id="BPMNEdge__6" sourceElement="_3" targetElement="_5">
-        <omgdi:waypoint x="345.0" y="300.0"/>
-        <omgdi:waypoint x="390.0" y="300.0"/>
-        <omgdi:waypoint x="425.0" y="300.0"/>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_8" id="BPMNEdge__8" sourceElement="_5" targetElement="_7">
-        <omgdi:waypoint x="510.0" y="302.5"/>
-        <omgdi:waypoint x="560.0" y="316.0"/>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="0.0" width="0.0" x="0.0" y="0.0"/>
         </bpmndi:BPMNLabel>

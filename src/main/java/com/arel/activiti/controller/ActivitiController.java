@@ -56,5 +56,4 @@ public class ActivitiController {
     public ResponseEntity<ProcessInstanceDto> startProcessInstance(@PathVariable String id) {
         return ResponseEntity.ok(activitiService.startProcess(id));
     }
-
 }

@@ -4,10 +4,8 @@ import com.arel.activiti.model.model.CommentDto;
 import com.arel.activiti.model.model.ProcessDefinitionDto;
 import com.arel.activiti.model.model.ProcessInstanceDto;
 import com.arel.activiti.model.model.TaskDto;
-import org.activiti.engine.IdentityService;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
+import org.activiti.engine.*;
+import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Attachment;
@@ -37,14 +35,16 @@ public class ActivitiService {
     private final RuntimeService runtimeService;
     private final TaskService taskService;
     private final IdentityService identityService;
+    private final FormService formService;
     private Logger logger = LoggerFactory.getLogger(ActivitiService.class);
 
     @Autowired
-    public ActivitiService(RepositoryService repositoryService, RuntimeService runtimeService, TaskService taskService, IdentityService identityService) {
+    public ActivitiService(RepositoryService repositoryService, RuntimeService runtimeService, TaskService taskService, IdentityService identityService, FormService formService) {
         this.repositoryService = repositoryService;
         this.runtimeService = runtimeService;
         this.taskService = taskService;
         this.identityService = identityService;
+        this.formService = formService;
     }
 
     public List<ProcessDefinitionDto> getProcessIdList() {
@@ -58,7 +58,7 @@ public class ActivitiService {
                     .latestVersion()
                     .active().list().stream()
                     .filter(item -> accountCredentials.getAuthorities().stream()
-                            .anyMatch(role -> role.getAuthority().contains(item.getCategory())))
+                            .anyMatch(role -> role.getAuthority().contains(item.getCategory()) || item.getCategory().contains("All")))
                     .map(item -> convertTo(item)).collect(Collectors.toList());
         }
     }
@@ -158,6 +158,18 @@ public class ActivitiService {
     public Attachment findAttachment(String id) {
         return taskService.getAttachment(id);
 
+    }
+
+    public boolean taskComplete(String id){
+        try {
+            TaskFormData taskFormData=formService.getTaskFormData(id);
+            taskFormData.getFormProperties();
+            taskService.setVariable(id,"ok",true);
+            taskService.complete(id);
+            return true;
+        }catch (Exception ex) {
+           return false;
+        }
     }
 
     public List<CommentDto> findAllComment(String id) {
