@@ -1,8 +1,11 @@
 package com.arel.activiti.config.security;
 
+import com.arel.activiti.model.model.LoginResponse;
+import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,7 +29,7 @@ class TokenAuthenticationService {
     static final String HEADER_STRING = "Authorization";
 
 
-    static void addAuthentication(HttpServletResponse res, Authentication auth)  {
+    static void addAuthentication(HttpServletResponse res, Authentication auth) throws IOException {
 
         Claims claims = Jwts.claims().setSubject(auth.getName());
         claims.put("scopes", auth.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
@@ -39,6 +42,14 @@ class TokenAuthenticationService {
                 .compact();
 
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setRoles(auth.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
+        loginResponse.setName(userDetails.getName());
+        loginResponse.setToken(JWT);
+        Gson gson = new Gson();
+        String loginJson = gson.toJson(loginResponse);
+        res.setContentType("application/json");
+        res.getWriter().write(loginJson);
     }
 
     static Authentication getAuthentication(HttpServletRequest request) {

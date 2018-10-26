@@ -14,6 +14,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+
 
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -27,15 +30,21 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
             HttpServletRequest req, HttpServletResponse res)
             throws AuthenticationException, IOException {
 
-        AccountCredentials creds = new ObjectMapper()
-                .readValue(req.getInputStream(), AccountCredentials.class);
+        try {
+            AccountCredentials creds = new ObjectMapper()
+                    .readValue(req.getInputStream(), AccountCredentials.class);
 
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(creds.getUsername(),
-                creds.getPassword(),
-                creds.getAuthorities());
-        return getAuthenticationManager().authenticate(
-                usernamePasswordAuthenticationToken
-        );
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(creds.getUsername(),
+                    creds.getPassword(), Collections.EMPTY_LIST);
+            return getAuthenticationManager().authenticate(
+                    usernamePasswordAuthenticationToken
+            );
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+            return null;
+        }
     }
 
     @Override
