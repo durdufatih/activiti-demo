@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,14 +105,21 @@ public class ActivitiService {
 
     private TaskDto convertToTask(Task task) {
         TaskDto taskDto = new TaskDto();
-        copyProperties(task, taskDto);
+        try {
+            task.setDescription(new String(task.getDescription().getBytes(), "UTF-8"));
+            copyProperties(task, taskDto);
 
-        taskDto.setCommentList(this.findAllComment(task.getId()));
-        taskDto.setAttachmentList(this.findTaskAttachment(task.getId()));
-        return taskDto;
+            taskDto.setTaskLocalVariables(formService.getTaskFormData(task.getId()).getFormProperties());
+            taskDto.setCommentList(this.findAllComment(task.getId()));
+            taskDto.setAttachmentList(this.findTaskAttachment(task.getId()));
+            return taskDto;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return taskDto;
+        }
     }
 
-    public List<TaskDto> findAllMyTask() {
+    public List<TaskDto> findAllMyTask()  {
         UsernamePasswordAuthenticationToken accountCredentials = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         return taskService.createTaskQuery()
                 .active()
@@ -160,15 +168,15 @@ public class ActivitiService {
 
     }
 
-    public boolean taskComplete(String id){
+    public boolean taskComplete(String id) {
         try {
-            TaskFormData taskFormData=formService.getTaskFormData(id);
+            TaskFormData taskFormData = formService.getTaskFormData(id);
             taskFormData.getFormProperties();
-            taskService.setVariable(id,"ok",true);
+            taskService.setVariable(id, "ok", true);
             taskService.complete(id);
             return true;
-        }catch (Exception ex) {
-           return false;
+        } catch (Exception ex) {
+            return false;
         }
     }
 

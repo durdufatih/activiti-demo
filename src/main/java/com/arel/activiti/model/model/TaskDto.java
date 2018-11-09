@@ -1,5 +1,6 @@
 package com.arel.activiti.model.model;
 
+import org.activiti.engine.form.FormProperty;
 import org.activiti.engine.task.Attachment;
 
 import java.util.Date;
@@ -40,7 +41,7 @@ public class TaskDto {
 
     private String formKey;
 
-    private Map<String, Object> taskLocalVariables;
+    private List<FormProperty> taskLocalVariables;
 
     private Map<String, Object> processVariables;
 
@@ -191,11 +192,11 @@ public class TaskDto {
         this.formKey = formKey;
     }
 
-    public Map<String, Object> getTaskLocalVariables() {
+    public List<FormProperty> getTaskLocalVariables() {
         return taskLocalVariables;
     }
 
-    public void setTaskLocalVariables(Map<String, Object> taskLocalVariables) {
+    public void setTaskLocalVariables(List<FormProperty> taskLocalVariables) {
         this.taskLocalVariables = taskLocalVariables;
     }
 
