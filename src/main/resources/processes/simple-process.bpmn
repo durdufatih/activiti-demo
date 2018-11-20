@@ -2,12 +2,13 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1526992254153" name="" targetNamespace="Officer" typeLanguage="http://www.w3.org/2001/XMLSchema">
   <process id="myProcess_1" isClosed="false" isExecutable="true" name="İzin Süreci" processType="None">
     <startEvent id="_2" name="StartEvent"/>
-    <userTask activiti:assignee="${initialPerson}" activiti:exclusive="true" activiti:priority="100" id="_3" name="UserTask">
-      <documentation id="_3_D_1"><![CDATA[Bu Task Ãƒâ€žÃ‚Â°lk TasktÃƒâ€žÃ‚Â±r izin istediÃƒâ€žÃ…Â¸in anda yÃƒÆ’Ã‚Â¶neticiye ÃƒÆ’Ã‚Â§aÃƒâ€žÃ…Â¸rÃƒâ€žÃ‚Â± gider]]></documentation>
+    <userTask activiti:assignee="${initialPerson}" activiti:exclusive="true" activiti:priority="100" id="_3" name="Çalışan İzin Sayfası">
+      <documentation id="_3_D_1"><![CDATA[Bu iş yöneticiden verilen tarihler arasında izin isteme işlemidir]]></documentation>
       <extensionElements>
-        <activiti:formProperty id="id" name="ID" readable="true" required="true" type="string" writable="false"/>
-        <activiti:formProperty id="name" name="Name" readable="true" required="false" type="string" writable="false"/>
+        <activiti:formProperty id="name" name="Name" readable="false" value="${initialPerson}" required="false" type="string" writable="false"/>
         <activiti:formProperty id="ok" name="Okey" readable="false" required="true" type="boolean" writable="false"/>
+        <activiti:formProperty id="start" name="Başlangıç Tarihi" type="date" datePattern="dd-MM-yyyy" required="true" readable="true" writable="true" />
+        <activiti:formProperty id="end" name="Bitiş Tarihi" type="date" datePattern="dd-MM-yyyy" required="true" readable="true" writable="true" />
       </extensionElements>
     </userTask>
     <sequenceFlow id="_4" sourceRef="_2" targetRef="_3"/>

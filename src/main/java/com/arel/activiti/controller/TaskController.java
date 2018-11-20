@@ -2,6 +2,7 @@ package com.arel.activiti.controller;
 
 
 import com.arel.activiti.model.model.CommentDto;
+import com.arel.activiti.model.model.CommentRequest;
 import com.arel.activiti.model.model.TaskDto;
 import com.arel.activiti.service.ActivitiService;
 import org.activiti.engine.task.Attachment;
@@ -30,9 +31,9 @@ public class TaskController {
         return ResponseEntity.ok(activitiService.findTaskById(id));
     }
 
-    @PostMapping("/comment/{id}/{comment}")
-    public ResponseEntity<Boolean> addComment(@PathVariable String id, @PathVariable String comment) {
-        return ResponseEntity.ok(activitiService.addCommentByTaskId(id, comment));
+    @PostMapping("/comment")
+    public ResponseEntity<Boolean> addComment(@RequestBody CommentRequest commentRequest) {
+        return ResponseEntity.ok(activitiService.addCommentByTaskId(commentRequest.getId(), commentRequest.getComment()));
     }
 
     @PostMapping("/comment/{id}")
