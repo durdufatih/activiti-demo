@@ -1,6 +1,7 @@
 package com.arel.activiti.controller;
 
 import com.arel.activiti.model.model.GeneralResponse;
+import com.arel.activiti.model.model.LeftMenuData;
 import com.arel.activiti.model.model.ProcessDefinitionDto;
 import com.arel.activiti.model.model.ProcessInstanceDto;
 import com.arel.activiti.service.ActivitiService;
@@ -55,5 +56,11 @@ public class ActivitiController {
     @GetMapping(value = "/process/{id}")
     public ResponseEntity<ProcessInstanceDto> startProcessInstance(@PathVariable String id) {
         return ResponseEntity.ok(activitiService.startProcess(id));
+    }
+
+    @GetMapping(value = "/left")
+    public ResponseEntity<LeftMenuData> leftMenuData() {
+        return ResponseEntity.ok(activitiService.leftmenuData());
+
     }
 }

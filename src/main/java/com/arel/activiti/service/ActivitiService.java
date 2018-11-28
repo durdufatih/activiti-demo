@@ -1,9 +1,6 @@
 package com.arel.activiti.service;
 
-import com.arel.activiti.model.model.CommentDto;
-import com.arel.activiti.model.model.ProcessDefinitionDto;
-import com.arel.activiti.model.model.ProcessInstanceDto;
-import com.arel.activiti.model.model.TaskDto;
+import com.arel.activiti.model.model.*;
 import org.activiti.engine.*;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
@@ -191,6 +188,13 @@ public class ActivitiService {
 
     public List<CommentDto> findAllComment(String id) {
         return taskService.getTaskComments(id).stream().map(item -> convetToCommentDto(item)).collect(Collectors.toList());
+    }
+
+    public LeftMenuData leftmenuData() {
+        LeftMenuData leftMenuData = new LeftMenuData();
+        leftMenuData.setJobCount(String.valueOf(this.findAllMyTask().size()));
+        leftMenuData.setProcessCount(String.valueOf(this.getProcessIdList().size()));
+        return leftMenuData;
     }
 
     private CommentDto convetToCommentDto(Comment comment) {
