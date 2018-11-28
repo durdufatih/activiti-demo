@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -36,10 +38,25 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(username);
+
+        return getUserDetails(userEntity);
+    }
+
+    public UserEntity getUser(String username) {
+        return userRepository.findByEmail(username);
+    }
+
+    public List<UserDetails> getAllUsers() {
+        List<UserEntity> userList = userRepository.findAll();
+        return userList.stream().map(item -> getUserDetails(item)).collect(Collectors.toList());
+    }
+
+
+    private UserDetails getUserDetails(UserEntity userEntity) {
         AccountCredentials accountCredentials = new AccountCredentials();
         if (userEntity != null) {
             accountCredentials.setId(userEntity.getId());
-            accountCredentials.setUsername(userEntity.getUsername());
+            accountCredentials.setUsername(userEntity.getEmail());
             accountCredentials.setPassword(userEntity.getPassword());
             accountCredentials.setName(userEntity.getName());
             accountCredentials.setSurname(userEntity.getSurname());
@@ -49,6 +66,7 @@ public class UserService implements UserDetailsService {
         } else
             return null;
     }
+
 
     private Collection<GrantedAuthority> getAuthority(int role) {
         Collection<GrantedAuthority> grantedAuthories = new ArrayList<>();

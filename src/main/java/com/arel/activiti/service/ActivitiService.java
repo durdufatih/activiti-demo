@@ -5,7 +5,6 @@ import com.arel.activiti.model.model.ProcessDefinitionDto;
 import com.arel.activiti.model.model.ProcessInstanceDto;
 import com.arel.activiti.model.model.TaskDto;
 import org.activiti.engine.*;
-import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Attachment;
@@ -16,12 +15,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,15 +36,17 @@ public class ActivitiService {
     private final TaskService taskService;
     private final IdentityService identityService;
     private final FormService formService;
+    private final UserService userService;
     private Logger logger = LoggerFactory.getLogger(ActivitiService.class);
 
     @Autowired
-    public ActivitiService(RepositoryService repositoryService, RuntimeService runtimeService, TaskService taskService, IdentityService identityService, FormService formService) {
+    public ActivitiService(RepositoryService repositoryService, RuntimeService runtimeService, TaskService taskService, IdentityService identityService, FormService formService, UserService userService) {
         this.repositoryService = repositoryService;
         this.runtimeService = runtimeService;
         this.taskService = taskService;
         this.identityService = identityService;
         this.formService = formService;
+        this.userService = userService;
     }
 
     public List<ProcessDefinitionDto> getProcessIdList() {
@@ -93,8 +94,18 @@ public class ActivitiService {
         UsernamePasswordAuthenticationToken accountCredentials = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         Map<String, Object> variables = new HashMap<>();
         variables.put("initialPerson", accountCredentials.getPrincipal().toString());
+        variables.put("leadPerson", getLeadUsername(accountCredentials));
+        variables.put("userName", userService.getUser(accountCredentials.getPrincipal().toString()).getName());
         return convertToProcessInstance(runtimeService.startProcessInstanceById(id, variables));
 
+    }
+
+    private String getLeadUsername(UsernamePasswordAuthenticationToken accountCredentials) {
+        UserDetails activeUser = userService.loadUserByUsername(accountCredentials.getPrincipal().toString());
+        List<UserDetails> userDetailsList = userService.getAllUsers();
+        userDetailsList = userDetailsList.stream().filter(item -> item.getUsername() != activeUser.getUsername()).collect(Collectors.toList());
+        UserDetails leadUser = userDetailsList.get(0);
+        return leadUser.getUsername();
     }
 
     private ProcessInstanceDto convertToProcessInstance(ProcessInstance processInstance) {
@@ -119,7 +130,7 @@ public class ActivitiService {
         }
     }
 
-    public List<TaskDto> findAllMyTask()  {
+    public List<TaskDto> findAllMyTask() {
         UsernamePasswordAuthenticationToken accountCredentials = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         return taskService.createTaskQuery()
                 .active()
@@ -168,12 +179,10 @@ public class ActivitiService {
 
     }
 
-    public boolean taskComplete(String id) {
+    public boolean taskComplete(String id, HashMap<String, Object> taskVariables) {
         try {
-            TaskFormData taskFormData = formService.getTaskFormData(id);
-            taskFormData.getFormProperties();
             taskService.setVariable(id, "ok", true);
-            taskService.complete(id);
+            taskService.complete(id, taskVariables);
             return true;
         } catch (Exception ex) {
             return false;

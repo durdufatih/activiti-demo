@@ -2,18 +2,26 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1526992254153" name="" targetNamespace="Officer" typeLanguage="http://www.w3.org/2001/XMLSchema">
   <process id="myProcess_1" isClosed="false" isExecutable="true" name="İzin Süreci" processType="None">
     <startEvent id="_2" name="StartEvent"/>
-    <userTask activiti:assignee="${initialPerson}" activiti:exclusive="true" activiti:priority="100" id="_3" name="Çalışan İzin Sayfası">
-      <documentation id="_3_D_1"><![CDATA[Bu iş yöneticiden verilen tarihler arasında izin isteme işlemidir]]></documentation>
+    <userTask activiti:assignee="${initialPerson}" activiti:async="true" activiti:exclusive="true" activiti:priority="100" id="_3" name="Çalışan İzin Sayası">
+      <documentation id="_3_D_1"><![CDATA[Bu İş yöneticiden verilen tarihler arasında izin isteme işlemidir]]></documentation>
       <extensionElements>
-        <activiti:formProperty id="name" name="Name" readable="false" value="${initialPerson}" required="false" type="string" writable="false"/>
+        <activiti:formProperty id="name" name="Name" readable="true" required="true" type="string"  writable="true" value="${userName}"/>
         <activiti:formProperty id="ok" name="Okey" readable="false" required="true" type="boolean" writable="false"/>
-        <activiti:formProperty id="start" name="Başlangıç Tarihi" type="date" datePattern="dd-MM-yyyy" required="true" readable="true" writable="true" />
-        <activiti:formProperty id="end" name="Bitiş Tarihi" type="date" datePattern="dd-MM-yyyy" required="true" readable="true" writable="true" />
+        <activiti:formProperty datePattern="dd-MM-yyyy" id="start" name="Başlangıç Tarihi" readable="true" required="true" type="date" writable="true"/>
+        <activiti:formProperty datePattern="dd-MM-yyyy" id="end" name="Bitiş Tarihi" readable="true" required="true" type="date" writable="true"/>
       </extensionElements>
     </userTask>
     <sequenceFlow id="_4" sourceRef="_2" targetRef="_3"/>
     <endEvent id="_7" name="EndEvent"/>
-    <userTask activiti:assignee="${initialPerson}" activiti:exclusive="true" id="_9" name="UserTask"/>
+    <userTask activiti:assignee="${leadPerson}" activiti:async="true" activiti:exclusive="true" id="_9" name="Çalışan Onay Sayfası">
+       <documentation id="_9_D_1"><![CDATA[Bu İş yöneticiden istenen tarihler arasında onay verir]]></documentation>
+      <extensionElements>
+        <activiti:formProperty id="name" name="Name" readable="true" required="true" type="string" writable="true" value="${userName}" />
+        <activiti:formProperty id="ok" name="Okey" readable="false" required="true" type="boolean" writable="false"/>
+        <activiti:formProperty datePattern="dd-MM-yyyy" id="start" name="Başlangıç Tarihi" readable="true" required="true" type="date" writable="true"/>
+        <activiti:formProperty datePattern="dd-MM-yyyy" id="end" name="Bitiş Tarihi" readable="true" required="true" type="date" writable="true"/>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="_10" sourceRef="_3" targetRef="_9">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ok==true}]]></conditionExpression>
     </sequenceFlow>
@@ -49,7 +57,7 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="_12" id="BPMNEdge__12" sourceElement="_3" targetElement="_7">
-        <omgdi:waypoint x="302.5" y="325.0"/>
+        <omgdi:waypoint x="302.5" y="340.0"/>
         <omgdi:waypoint x="445.0" y="380.0"/>
         <omgdi:waypoint x="576.0" y="332.0"/>
         <bpmndi:BPMNLabel>
@@ -71,7 +79,7 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="_10" id="BPMNEdge__10" sourceElement="_3" targetElement="_9">
-        <omgdi:waypoint x="310.0" y="270.0"/>
+        <omgdi:waypoint x="310.0" y="255.0"/>
         <omgdi:waypoint x="310.0" y="200.0"/>
         <omgdi:waypoint x="430.0" y="200.0"/>
         <bpmndi:BPMNLabel>

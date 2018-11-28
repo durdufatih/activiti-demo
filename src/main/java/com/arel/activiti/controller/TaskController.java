@@ -4,6 +4,7 @@ package com.arel.activiti.controller;
 import com.arel.activiti.model.model.CommentDto;
 import com.arel.activiti.model.model.CommentRequest;
 import com.arel.activiti.model.model.TaskDto;
+import com.arel.activiti.model.model.TaskRequestDto;
 import com.arel.activiti.service.ActivitiService;
 import org.activiti.engine.task.Attachment;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +52,9 @@ public class TaskController {
         return ResponseEntity.ok(activitiService.findAttachment(id));
     }
 
-    @GetMapping("/complete/{id}")
-    public ResponseEntity<Boolean> taskComplete(@PathVariable String id) {
-        return ResponseEntity.ok(activitiService.taskComplete(id));
+    @PostMapping("/complete/{id}")
+    public ResponseEntity<Boolean> taskComplete(@RequestBody TaskRequestDto taskRequestDto, @PathVariable String id) {
+        return ResponseEntity.ok(activitiService.taskComplete(id, taskRequestDto.getVariables()));
     }
 
 
