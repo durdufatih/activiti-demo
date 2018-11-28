@@ -5,7 +5,7 @@
     <userTask activiti:assignee="${initialPerson}" activiti:async="true" activiti:exclusive="true" activiti:priority="100" id="_3" name="Çalışan İzin Sayası">
       <documentation id="_3_D_1"><![CDATA[Bu İş yöneticiden verilen tarihler arasında izin isteme işlemidir]]></documentation>
       <extensionElements>
-        <activiti:formProperty id="name" name="Name" readable="true" required="true" type="string"  writable="true" value="${userName}"/>
+        <activiti:formProperty id="name" name="Name" readable="true" required="true" type="string"  writable="true" activiti:value="${userName}"/>
         <activiti:formProperty id="ok" name="Okey" readable="false" required="true" type="boolean" writable="false"/>
         <activiti:formProperty datePattern="dd-MM-yyyy" id="start" name="Başlangıç Tarihi" readable="true" required="true" type="date" writable="true"/>
         <activiti:formProperty datePattern="dd-MM-yyyy" id="end" name="Bitiş Tarihi" readable="true" required="true" type="date" writable="true"/>
@@ -16,7 +16,7 @@
     <userTask activiti:assignee="${leadPerson}" activiti:async="true" activiti:exclusive="true" id="_9" name="Çalışan Onay Sayfası">
        <documentation id="_9_D_1"><![CDATA[Bu İş yöneticiden istenen tarihler arasında onay verir]]></documentation>
       <extensionElements>
-        <activiti:formProperty id="name" name="Name" readable="true" required="true" type="string" writable="true" value="${userName}" />
+        <activiti:formProperty id="name" name="Name" readable="true" required="true" type="string" writable="true" activiti:value="${userName}" />
         <activiti:formProperty id="ok" name="Okey" readable="false" required="true" type="boolean" writable="false"/>
         <activiti:formProperty datePattern="dd-MM-yyyy" id="start" name="Başlangıç Tarihi" readable="true" required="true" type="date" writable="true"/>
         <activiti:formProperty datePattern="dd-MM-yyyy" id="end" name="Bitiş Tarihi" readable="true" required="true" type="date" writable="true"/>

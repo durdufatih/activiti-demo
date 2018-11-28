@@ -89,11 +89,18 @@ public class ActivitiService {
 
     public ProcessInstanceDto startProcess(String id) {
         UsernamePasswordAuthenticationToken accountCredentials = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("initialPerson", accountCredentials.getPrincipal().toString());
-        variables.put("leadPerson", getLeadUsername(accountCredentials));
-        variables.put("userName", userService.getUser(accountCredentials.getPrincipal().toString()).getName());
-        return convertToProcessInstance(runtimeService.startProcessInstanceById(id, variables));
+        //Fix that area
+        Map<String, String> variables = new HashMap<>();
+        variables.put("name", userService.getUser(accountCredentials.getPrincipal().toString()).getName());
+
+        Map<String, Object> variablesProcess = new HashMap<>();
+        variablesProcess.put("initialPerson", accountCredentials.getPrincipal().toString());
+        variablesProcess.put("leadPerson", getLeadUsername(accountCredentials));
+        variablesProcess.put("userName", userService.getUser(accountCredentials.getPrincipal().toString()).getName());
+
+        ProcessInstanceDto processInstanceDto = convertToProcessInstance(runtimeService.startProcessInstanceById(id, variablesProcess));
+        formService.submitStartFormData(id, variables);
+        return processInstanceDto;
 
     }
 
@@ -116,8 +123,8 @@ public class ActivitiService {
         try {
             task.setDescription(new String(task.getDescription().getBytes(), "UTF-8"));
             copyProperties(task, taskDto);
-
             taskDto.setTaskLocalVariables(formService.getTaskFormData(task.getId()).getFormProperties());
+            taskDto.setProcessVariables(taskService.getVariables(task.getId()));
             taskDto.setCommentList(this.findAllComment(task.getId()));
             taskDto.setAttachmentList(this.findTaskAttachment(task.getId()));
             return taskDto;
@@ -126,6 +133,7 @@ public class ActivitiService {
             return taskDto;
         }
     }
+
 
     public List<TaskDto> findAllMyTask() {
         UsernamePasswordAuthenticationToken accountCredentials = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
