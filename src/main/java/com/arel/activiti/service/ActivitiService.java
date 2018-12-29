@@ -2,6 +2,7 @@ package com.arel.activiti.service;
 
 import com.arel.activiti.model.model.*;
 import org.activiti.engine.*;
+import org.activiti.engine.form.FormProperty;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Attachment;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,16 +92,24 @@ public class ActivitiService {
     public ProcessInstanceDto startProcess(String id) {
         UsernamePasswordAuthenticationToken accountCredentials = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         //Fix that area
-        Map<String, String> variables = new HashMap<>();
-        variables.put("name", userService.getUser(accountCredentials.getPrincipal().toString()).getName());
+        //Map<String, String> variables = new HashMap<>();
+        //variables.put("name", userService.getUser(accountCredentials.getPrincipal().toString()).getName());
 
         Map<String, Object> variablesProcess = new HashMap<>();
         variablesProcess.put("initialPerson", accountCredentials.getPrincipal().toString());
         variablesProcess.put("leadPerson", getLeadUsername(accountCredentials));
         variablesProcess.put("userName", userService.getUser(accountCredentials.getPrincipal().toString()).getName());
+        variablesProcess.put("name", userService.getUser(accountCredentials.getPrincipal().toString()).getName());
 
+       /* Map<String, String> variablesValues = new HashMap<String, String>();
+        for (Map.Entry<String, Object> entry : variablesProcess.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                variablesValues.put(entry.getKey(), (String) entry.getValue());
+            }
+        }
+        variablesValues.put("name", userService.getUser(accountCredentials.getPrincipal().toString()).getName());*/
         ProcessInstanceDto processInstanceDto = convertToProcessInstance(runtimeService.startProcessInstanceById(id, variablesProcess));
-        formService.submitStartFormData(id, variables);
+        //formService.submitStartFormData(processInstanceDto.getId(), variablesValues);
         return processInstanceDto;
 
     }
@@ -107,7 +117,7 @@ public class ActivitiService {
     private String getLeadUsername(UsernamePasswordAuthenticationToken accountCredentials) {
         UserDetails activeUser = userService.loadUserByUsername(accountCredentials.getPrincipal().toString());
         List<UserDetails> userDetailsList = userService.getAllUsers();
-        userDetailsList = userDetailsList.stream().filter(item -> item.getUsername() != activeUser.getUsername()).collect(Collectors.toList());
+        userDetailsList = userDetailsList.stream().filter(item -> item.getUsername().equals(activeUser.getUsername())).collect(Collectors.toList());
         UserDetails leadUser = userDetailsList.get(0);
         return leadUser.getUsername();
     }
@@ -123,7 +133,7 @@ public class ActivitiService {
         try {
             task.setDescription(new String(task.getDescription().getBytes(), "UTF-8"));
             copyProperties(task, taskDto);
-            taskDto.setTaskLocalVariables(formService.getTaskFormData(task.getId()).getFormProperties());
+            taskDto.setTaskLocalVariables(this.setFromData(formService.getTaskFormData(task.getId()).getFormProperties()));
             taskDto.setProcessVariables(taskService.getVariables(task.getId()));
             taskDto.setCommentList(this.findAllComment(task.getId()));
             taskDto.setAttachmentList(this.findTaskAttachment(task.getId()));
@@ -132,6 +142,25 @@ public class ActivitiService {
             ex.printStackTrace();
             return taskDto;
         }
+    }
+
+    private List<FormPropertyDto> setFromData(List<FormProperty> formProperties) {
+
+        List<FormPropertyDto> formPropertyDtoList = new ArrayList<>();
+        for (FormProperty formProperty : formProperties) {
+            FormPropertyDto formPropertyDto = new FormPropertyDto();
+            formPropertyDto.setId(formProperty.getId());
+            formPropertyDto.setName(formProperty.getName());
+            formPropertyDto.setType(formProperty.getType());
+            formPropertyDto.setValue(formProperty.getValue());
+            formPropertyDto.setReadable(formProperty.isReadable());
+            formPropertyDto.setWritable(formProperty.isWritable());
+            formPropertyDto.setRequired(formProperty.isRequired());
+            formPropertyDtoList.add(formPropertyDto);
+        }
+
+        return formPropertyDtoList;
+
     }
 
 
