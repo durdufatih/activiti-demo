@@ -94,12 +94,14 @@ public class ActivitiService {
         //Fix that area
         //Map<String, String> variables = new HashMap<>();
         //variables.put("name", userService.getUser(accountCredentials.getPrincipal().toString()).getName());
-
         Map<String, Object> variablesProcess = new HashMap<>();
         variablesProcess.put("initialPerson", accountCredentials.getPrincipal().toString());
         variablesProcess.put("leadPerson", getLeadUsername(accountCredentials));
         variablesProcess.put("userName", userService.getUser(accountCredentials.getPrincipal().toString()).getName());
         variablesProcess.put("name", userService.getUser(accountCredentials.getPrincipal().toString()).getName());
+
+
+
 
        /* Map<String, String> variablesValues = new HashMap<String, String>();
         for (Map.Entry<String, Object> entry : variablesProcess.entrySet()) {
@@ -133,10 +135,11 @@ public class ActivitiService {
         try {
             task.setDescription(new String(task.getDescription().getBytes(), "UTF-8"));
             copyProperties(task, taskDto);
-            taskDto.setTaskLocalVariables(this.setFromData(formService.getTaskFormData(task.getId()).getFormProperties()));
+            taskDto.setTaskLocalVariables(this.setFromData(formService.getTaskFormData(task.getId()).getFormProperties(), taskService.getVariables(task.getId())));
             taskDto.setProcessVariables(taskService.getVariables(task.getId()));
             taskDto.setCommentList(this.findAllComment(task.getId()));
             taskDto.setAttachmentList(this.findTaskAttachment(task.getId()));
+
             return taskDto;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -144,7 +147,7 @@ public class ActivitiService {
         }
     }
 
-    private List<FormPropertyDto> setFromData(List<FormProperty> formProperties) {
+    private List<FormPropertyDto> setFromData(List<FormProperty> formProperties, Map<String, Object> variables) {
 
         List<FormPropertyDto> formPropertyDtoList = new ArrayList<>();
         for (FormProperty formProperty : formProperties) {
@@ -156,6 +159,7 @@ public class ActivitiService {
             formPropertyDto.setReadable(formProperty.isReadable());
             formPropertyDto.setWritable(formProperty.isWritable());
             formPropertyDto.setRequired(formProperty.isRequired());
+            formPropertyDto.setValues((HashMap<String, String>) variables.get(formProperty.getId() + "List"));
             formPropertyDtoList.add(formPropertyDto);
         }
 
