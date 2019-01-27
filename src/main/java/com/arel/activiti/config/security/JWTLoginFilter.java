@@ -1,5 +1,6 @@
 package com.arel.activiti.config.security;
 
+import com.arel.activiti.exceptions.BadCredentialException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +15,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 
 
@@ -28,7 +28,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     public Authentication attemptAuthentication(
             HttpServletRequest req, HttpServletResponse res)
-            throws AuthenticationException, IOException {
+            throws AuthenticationException {
 
         try {
             AccountCredentials creds = new ObjectMapper()
@@ -39,11 +39,9 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
             return getAuthenticationManager().authenticate(
                     usernamePasswordAuthenticationToken
             );
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             logger.error(ex.getMessage());
-            return null;
+            throw new BadCredentialException("Kullanıcı adi veya şifre yanlış");
         }
     }
 

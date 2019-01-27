@@ -127,6 +127,8 @@ public class ActivitiService {
     private ProcessInstanceDto convertToProcessInstance(ProcessInstance processInstance) {
         ProcessInstanceDto processInstanceDto = new ProcessInstanceDto();
         copyProperties(processInstance, processInstanceDto);
+        Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).active().singleResult();
+        processInstanceDto.setTaskId(task.getId());
         return processInstanceDto;
     }
 

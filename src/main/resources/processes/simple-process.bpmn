@@ -30,7 +30,7 @@
     <sequenceFlow id="_12" sourceRef="_3" targetRef="_7">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ok==false}]]></conditionExpression>
     </sequenceFlow>
-    <serviceTask activiti:class="com.arel.common.service.ActivitiVariableService" activiti:exclusive="true" id="_5" name="ServiceTask"/>
+    <serviceTask activiti:class="com.arel.activiti.service.activitiprocess.ActivitiVariableService" activiti:exclusive="true" id="_5" name="ServiceTask"/>
     <sequenceFlow id="_6" sourceRef="_2" targetRef="_5"/>
     <sequenceFlow id="_8" sourceRef="_5" targetRef="_3"/>
   </process>
