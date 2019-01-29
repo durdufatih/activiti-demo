@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 @Configuration
 @EnableWebSecurity
-@Component
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements ApplicationContextAware {
 
     private final CustomAuthenticationProvider customAuthenticationProvider;
