@@ -3,6 +3,7 @@ package com.arel.activiti.service;
 import com.arel.activiti.model.model.*;
 import org.activiti.engine.*;
 import org.activiti.engine.form.FormProperty;
+import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Attachment;
@@ -127,7 +128,7 @@ public class ActivitiService {
     private ProcessInstanceDto convertToProcessInstance(ProcessInstance processInstance) {
         ProcessInstanceDto processInstanceDto = new ProcessInstanceDto();
         copyProperties(processInstance, processInstanceDto);
-        Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId()).active().singleResult();
+        Task task = taskService.createTaskQuery().processInstanceId(processInstance.getId()).active().singleResult();
         processInstanceDto.setTaskId(task.getId());
         return processInstanceDto;
     }
